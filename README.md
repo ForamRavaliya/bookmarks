@@ -1,3 +1,12 @@
+<img width="1918" height="860" alt="image" src="https://github.com/user-attachments/assets/0b0b2b4a-9d3b-4fcc-bb3c-1c8f0949a9fd" />
+<img width="793" height="808" alt="image" src="https://github.com/user-attachments/assets/f0018a02-6f4a-470c-a4de-28bf869396a3" />
+<img width="763" height="745" alt="image" src="https://github.com/user-attachments/assets/95c6ed16-febd-4bba-af3d-2e73ff08d8bd" />
+<img width="1913" height="866" alt="image" src="https://github.com/user-attachments/assets/133590eb-43f8-463c-82f2-c3f83aef7961" />
+<img width="1919" height="859" alt="image" src="https://github.com/user-attachments/assets/66e17388-ba19-4c7f-ba91-06ee3f37c37f" />
+<img width="1919" height="866" alt="image" src="https://github.com/user-attachments/assets/8faf45e9-6f39-4105-bdf7-eaa038d13319" />
+
+
+
 # 🔖 Bookmarks App
 
 A "Linktree meets Pocket" personal bookmarks app. Save links, keep them private or share a beautiful public profile.
