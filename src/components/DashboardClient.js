@@ -15,6 +15,21 @@ export default function DashboardClient({ user, profile, initialBookmarks }) {
   // ── State ──────────────────────────────────────────────
   const [bookmarks, setBookmarks] = useState(initialBookmarks);
 
+  const publicCount = bookmarks.filter((bm) => bm.is_public).length;
+  const privateCount = bookmarks.length - publicCount;
+  const [copied, setCopied] = useState(false);
+
+  async function copyProfileLink() {
+    if (!profile?.handle) return;
+
+    await navigator.clipboard.writeText(
+      `${window.location.origin}/${profile.handle}`
+    );
+
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }
+
   // Add-form state
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
@@ -113,19 +128,22 @@ export default function DashboardClient({ user, profile, initialBookmarks }) {
   }
 
   // ── Delete ─────────────────────────────────────────────
-  async function handleDelete(id) {
-    setDeletingId(id);
+ async function handleDelete(id) {
+   const ok = confirm("Are you sure you want to delete this bookmark?");
+   if (!ok) return;
 
-    const res = await fetch(`/api/bookmarks/${id}`, {
-      method: "DELETE",
-    });
+   setDeletingId(id);
 
-    if (res.ok) {
-      setBookmarks((prev) => prev.filter((bm) => bm.id !== id));
-    }
+   const res = await fetch(`/api/bookmarks/${id}`, {
+     method: "DELETE",
+   });
 
-    setDeletingId(null);
-  }
+   if (res.ok) {
+     setBookmarks((prev) => prev.filter((bm) => bm.id !== id));
+   }
+
+   setDeletingId(null);
+ }
 
   // ── Render ─────────────────────────────────────────────
   return (
@@ -169,6 +187,23 @@ export default function DashboardClient({ user, profile, initialBookmarks }) {
             </Link>
           </div>
         )}
+
+        <div className="dashboard-stats">
+          <div className="stat-card">
+            <span className="stat-label">Total Bookmarks</span>
+            <strong>{bookmarks.length}</strong>
+          </div>
+
+          <div className="stat-card">
+            <span className="stat-label">Public</span>
+            <strong>{publicCount}</strong>
+          </div>
+
+          <div className="stat-card">
+            <span className="stat-label">Private</span>
+            <strong>{privateCount}</strong>
+          </div>
+        </div>
 
         {/* ── Add bookmark form ── */}
         <div className="add-form-card">
@@ -239,16 +274,27 @@ export default function DashboardClient({ user, profile, initialBookmarks }) {
             </span>
           </h2>
 
-          {profile?.handle && (
-            <Link
-              href={`/${profile.handle}`}
-              target="_blank"
-              className="btn btn-secondary"
-              style={{ fontSize: "0.8rem", padding: "0.35rem 0.85rem" }}
-            >
-              View public profile ↗
-            </Link>
-          )}
+         {profile?.handle && (
+           <div className="profile-actions">
+             <button
+               type="button"
+               onClick={copyProfileLink}
+               className={`btn ${copied ? "btn-success" : "btn-secondary"}`}
+               style={{ fontSize: "0.8rem", padding: "0.35rem 0.85rem" }}
+             >
+               {copied ? "Copied ✓" : "Copy link"}
+             </button>
+
+             <Link
+               href={`/${profile.handle}`}
+               target="_blank"
+               className="btn btn-secondary"
+               style={{ fontSize: "0.8rem", padding: "0.35rem 0.85rem" }}
+             >
+               View public profile ↗
+             </Link>
+           </div>
+         )}
         </div>
 
         {bookmarks.length === 0 ? (
@@ -323,26 +369,33 @@ export default function DashboardClient({ user, profile, initialBookmarks }) {
               // Normal card view
               return (
                 <div key={bm.id} className="bookmark-card">
-                  <div className="bookmark-info">
-                    <div className="bookmark-title">{bm.title}</div>
-                    <a
-                      href={bm.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bookmark-url"
-                    >
-                      {bm.url}
-                    </a>
-                    <div className="bookmark-meta">
-                      <span
-                        className={`badge ${
-                          bm.is_public ? "badge-public" : "badge-private"
-                        }`}
-                      >
-                        {bm.is_public ? "Public" : "Private"}
-                      </span>
-                    </div>
-                  </div>
+               <div className="bookmark-info">
+                 <div className="bookmark-title">{bm.title}</div>
+
+                 <a
+                   href={bm.url}
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   className="bookmark-url"
+                 >
+                   {bm.url}
+                 </a>
+
+                 <div className="bookmark-meta">
+                   <span
+                     className={`badge ${
+                       bm.is_public ? "badge-public" : "badge-private"
+                     }`}
+                   >
+                     {bm.is_public ? "🌐 Public" : "🔒 Private"}
+                   </span>
+
+                   <span className="bookmark-date">
+                     {new Date(bm.created_at).toLocaleDateString()}
+                   </span>
+                 </div>
+               </div>
+
 
                   <div className="bookmark-actions">
                     <button

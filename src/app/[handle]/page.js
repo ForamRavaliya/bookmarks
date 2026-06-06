@@ -45,6 +45,9 @@ export default async function PublicProfilePage({ params }) {
       <div className="profile-header">
         <div className="profile-avatar">{initial}</div>
         <h1 className="profile-handle">
+        <p className="profile-description">
+          Shared bookmarks and useful resources.
+        </p>
           <span>@</span>
           {profile.handle}
         </h1>
